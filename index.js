@@ -85,10 +85,10 @@ async function main() {
       if (lastGroup !== group) {
         if (lastGroup !== null) { // Go back to grop selection and unselect last group
           await driver.findElement(By.css('#backcell > input[type=submit]')).click();
-          await driver.findElement(By.xpath(`//select[@id="groups"]/option[contains(./text(),"${lastGroup}")]`)).click();
+          await driver.findElement(By.xpath(`//select[@id="groups"]/option[starts-with(./text(),"${lastGroup}")]`)).click();
         }
         // Select current group
-        await driver.findElement(By.xpath(`//select[@id="groups"]/option[contains(./text(),"${group}")]`)).click();
+        await driver.findElement(By.xpath(`//select[@id="groups"]/option[starts-with(./text(),"${group}")]`)).click();
         await driver.findElement(By.id('showaddmembersform')).click();
       }
       lastGroup = group;
