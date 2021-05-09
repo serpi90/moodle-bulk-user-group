@@ -96,13 +96,13 @@ async function main() {
       const isUserVisible = await driver.wait(
         until.elementLocated(By.css('#addselect option[value]')),
         1000,
-        `User ${user} not found in list of users to add`,
+        `User ${user} not found in list of users to add to ${group}`,
       ).then(() => true).catch(() => false);
       if (isUserVisible) {
         await driver.findElement(By.css('#addselect option')).click();
         await driver.findElement(By.id('add')).click();
       } else {
-        console.error(`User ${user} not found in list of users to add`);
+        console.error(`User ${user} not found in list of users to add ${group}`);
       }
 
       await driver.findElement(By.id('addselect_clearbutton')).click();
