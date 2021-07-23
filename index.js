@@ -33,21 +33,26 @@ async function setupDriver() {
 }
 
 async function login(driver) {
-  const url = await driver.getCurrentUrl();
-  if (url.endsWith('policy.php')) {
-    await driver.findElement(By.css('#notice input[type=submit]')).click();
-  }
-  const isLoginButtonVisible = await driver.wait(
+  let isPolicyAcceptButtonVisible = false;
+  do {
+    isPolicyAcceptButtonVisible = await driver.wait(
+      until.elementLocated(By.css('#notice input[type=submit]')),
+      5000,
+      'Could not find [Yes] button for accepting site policy',
+    ).then(() => true).catch(() => false);
+  } while (!isPolicyAcceptButtonVisible);
+
+  await driver.findElement(By.css('#notice input[type=submit]')).click();
+
+  await driver.wait(
     until.elementLocated(By.css('.login')),
     5000,
     'No es visible el login',
-  ).then(() => true).catch(() => false);
-  if (isLoginButtonVisible) {
-    await driver.findElement(By.css('.login a')).click();
-    await driver.findElement(By.id('username')).sendKeys(process.env.USERNAME);
-    await driver.findElement(By.id('password')).sendKeys(process.env.PASSWORD);
-    await driver.findElement(By.id('loginbtn')).click();
-  }
+  );
+  await driver.findElement(By.css('.login a')).click();
+  await driver.findElement(By.id('username')).sendKeys(process.env.USERNAME);
+  await driver.findElement(By.id('password')).sendKeys(process.env.PASSWORD);
+  await driver.findElement(By.id('loginbtn')).click();
 }
 
 async function parseMembershipsFromFile() {
