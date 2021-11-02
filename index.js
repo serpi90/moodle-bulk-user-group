@@ -33,23 +33,20 @@ async function setupDriver() {
 }
 
 async function login(driver) {
-  let isPolicyAcceptButtonVisible = false;
-  do {
-    isPolicyAcceptButtonVisible = await driver.wait(
-      until.elementLocated(By.css('#notice input[type=submit]')),
-      5000,
-      'Could not find [Yes] button for accepting site policy',
-    ).then(() => true).catch(() => false);
-  } while (!isPolicyAcceptButtonVisible);
+  await driver.get('https://campus.exactas.uba.ar/login/index.php');
+  const isPolicyAcceptButtonVisible = await driver.wait(
+    until.elementLocated(By.css('#notice input[type=submit]')),
+    5000,
+    'Could not find [Yes] button for accepting site policy',
+  ).then(() => true).catch(() => false);
 
-  await driver.findElement(By.css('#notice input[type=submit]')).click();
+  if (isPolicyAcceptButtonVisible) await driver.findElement(By.css('#notice input[type=submit]')).click();
 
   await driver.wait(
     until.elementLocated(By.css('.login')),
     5000,
     'No es visible el login',
   );
-  await driver.findElement(By.css('.login a')).click();
   await driver.findElement(By.id('username')).sendKeys(process.env.USERNAME);
   await driver.findElement(By.id('password')).sendKeys(process.env.PASSWORD);
   await driver.findElement(By.id('loginbtn')).click();
@@ -81,8 +78,8 @@ async function main() {
   const driver = await setupDriver();
   try {
     console.log('start');
-    await driver.get(process.env.TARGET);
     await login(driver);
+    await driver.get(process.env.TARGET);
     await ensureValidCourse(driver);
     const memberships = await parseMembershipsFromFile();
     let lastGroup = null;
