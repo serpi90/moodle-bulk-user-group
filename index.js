@@ -17,7 +17,7 @@ async function setupDriver() {
       .catch(() => false);
     retries -= 1;
     // Wait 5 seconds if not ready
-    if (!ready) await new Promise(resolve => setTimeout(resolve, 5000));
+    if (!ready) await new Promise(resolve => { setTimeout(resolve, 5000); });
   }
 
   if (!ready) throw new Error('Selenium is not responding');
